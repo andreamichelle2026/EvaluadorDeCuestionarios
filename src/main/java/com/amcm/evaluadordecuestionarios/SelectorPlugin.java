@@ -8,12 +8,12 @@ package com.amcm.evaluadordecuestionarios;
  * Regla de seleccion: devuelve el NOMBRE COMPLETO de la clase del plugin a usar.
  *
  *  - modoValidacion = true  (pregunta de respuesta corta) -> ProcesadorSimple   (Java)
- *  - modoValidacion = false (pregunta abierta)            -> ProcesadorConceptos (Scala)
+ *  - modoValidacion = false (pregunta de respuesta larga) -> ProcesadorComplejo (Scala)
  */
 public final class SelectorPlugin {
 
-    public static final String CLASE_SIMPLE = "com.acme.quiz.plugins.ProcesadorSimple";
-    public static final String CLASE_CONCEPTOS = "com.acme.quiz.plugins.ProcesadorConceptos";
+    public static final String CLASE_SIMPLE = "com.amcm.evaluadordecuestionarios.plugins.ProcesadorSimple";
+    public static final String CLASE_CONCEPTOS = "com.amcm.evaluadordecuestionarios.plugins.ProcesadorConceptos";
 
     private SelectorPlugin() {}
 
