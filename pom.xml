@@ -14,7 +14,7 @@
 </properties>
 
 <dependencies>
-<!--  el evaluador de preguntas abiertas esta escrito en Scala  -->
+<!--  el evaluador de preguntas largas esta escrito en Scala  -->
     <dependency>
         <groupId>org.scala-lang</groupId>
         <artifactId>scala3-library_3</artifactId>
@@ -32,7 +32,7 @@
 
 <build>
     <plugins>
-    <!--  Compila src/main/scala ANTES de la fase compile (receta estandar para proyectos mixtos)  -->
+    <!--  Compila src/main/scala ANTES de la fase compile -->
         <plugin>
             <groupId>net.alchim31.maven</groupId>
             <artifactId>scala-maven-plugin</artifactId>
