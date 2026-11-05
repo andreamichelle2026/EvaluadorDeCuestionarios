@@ -4,7 +4,9 @@
  */
 package com.amcm.evaluadordecuestionarios;
 
-/** Registro de una ejecucion: que plugin se uso para cada pregunta y con que resultado. */
+/** Registro de una ejecucion: 
+ * que plugin se uso para cada pregunta y con que resultado. 
+ */
 public record RegistroEjecucion(
         int idPregunta,
         TipoPregunta tipo,

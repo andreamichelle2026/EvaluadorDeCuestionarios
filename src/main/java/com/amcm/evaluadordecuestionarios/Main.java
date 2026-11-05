@@ -2,6 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
 package com.amcm.evaluadordecuestionarios;
 
 import java.util.ArrayList;
@@ -23,19 +24,28 @@ public class Main {
         List<Pregunta> preguntas = BancoPreguntas.todas();
         List<RegistroEjecucion> registros = new ArrayList<>();
         Scanner teclado = new Scanner(System.in);
-
+        
         System.out.println("=== Cuestionario: fundamentos de Java (plugins Java + Scala) ===");
         System.out.println("Responde cada pregunta y pulsa Enter. Son " + preguntas.size() + " preguntas.");
 
         for (Pregunta pregunta : preguntas) {
-            System.out.printf("%nPregunta %d/%d [%s]%n%s%n> ",
+            System.out.printf("%nPregunta %d/%d [%s]%n%s%n",
                     pregunta.getId(), preguntas.size(), pregunta.getTipo(), pregunta.getEnunciado());
+            if (pregunta.getTipo() == TipoPregunta.ALTERNATIVAS) {
+                char letra = 'A';
+                for (String opcion : pregunta.getOpciones()) {
+                    System.out.println("  " + letra + ") " + opcion);
+                    letra++;
+                }
+            }
+            System.out.print("> ");
             String entrada = teclado.hasNextLine() ? teclado.nextLine() : "";
 
-            // 1) Contexto
-            boolean modoValidacion = pregunta.getTipo() == TipoPregunta.CORTA;
-            Contexto contexto = new Contexto(entrada.length(), modoValidacion, pregunta);
-
+            // 1) Contexto: corta y alternativas se validan contra una respuesta fija
+            boolean modoValidacion = pregunta.getTipo() == TipoPregunta.CORTA
+                    || pregunta.getTipo() == TipoPregunta.ALTERNATIVAS;
+            Contexto contexto = new Contexto(entrada.trim().length(), modoValidacion, pregunta);
+            
             // 2) Regla de seleccion: nombre completo de la clase + motivo
             String nombreClase = SelectorPlugin.seleccionar(contexto);
             String motivo = SelectorPlugin.motivo(contexto);
@@ -72,20 +82,21 @@ public class Main {
     }
 
     private static void imprimirRegistro(List<RegistroEjecucion> registros) {
+        final String formato = "%-4s %-12s %-12s %-22s %-7s %5s%n";
         System.out.println();
         System.out.println("=== Registro de ejecucion ===");
-        System.out.printf("%-4s %-8s %-10s %-22s %-7s %5s%n", "P", "Tipo", "Plugin", "Clase", "Estado", "Nota");
-        System.out.println("-".repeat(62));
+        System.out.printf(formato, "P", "Tipo", "Plugin", "Clase", "Estado", "Nota");
+        System.out.println("-".repeat(67));
 
         double total = 0.0;
         for (RegistroEjecucion r : registros) {
             total += r.nota();
             String clase = r.nombreClase().substring(r.nombreClase().lastIndexOf('.') + 1);
-            System.out.printf("P%-3d %-8s %-10s %-22s %-7s %5.2f%n",
+            System.out.printf("P%-3d %-12s %-12s %-22s %-7s %5.2f%n",
                     r.idPregunta(), r.tipo(), r.idPlugin(), clase, r.estado(), r.nota());
         }
-        System.out.println("-".repeat(62));
-        System.out.printf("Nota final: %.1f / %d%n", total, registros.size());
+        System.out.println("-".repeat(67));
+        System.out.printf("Nota final: %.1f / %d  (equivalente a %.1f / 10)%n",
+                total, registros.size(), registros.isEmpty() ? 0.0 : total * 10.0 / registros.size());
     }
 }
-

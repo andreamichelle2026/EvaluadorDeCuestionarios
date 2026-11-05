@@ -4,14 +4,15 @@
  */
 package com.amcm.evaluadordecuestionarios;
 
-public class Contexto {
-    private int tamanioTexto;
-    private boolean modoValidacion;
-    private Pregunta pregunta;   // pregunta que se esta evaluando (puede ser null)
+/*
+ * Clase de datos que representa la información de la pregunta que se está evaluando,
+ * para pasársela al selector y a los plugins.
+*/
 
-    public Contexto(int tamanioTexto, boolean modoValidacion) {
-        this(tamanioTexto, modoValidacion, null);
-    }
+public class Contexto {
+    private int tamanioTexto; // Longitud en caracteres de la respuesta del usuario
+    private boolean modoValidacion; // true si la pregunta es tipo CORTA / ALTERNATIVAS
+    private Pregunta pregunta;   // pregunta que se esta evaluando (puede ser null)
 
     public Contexto(int tamanioTexto, boolean modoValidacion, Pregunta pregunta) {
         this.tamanioTexto = tamanioTexto;
@@ -22,4 +23,9 @@ public class Contexto {
     public int getTamanioTexto() { return tamanioTexto; }
     public boolean isModoValidacion() { return modoValidacion; }
     public Pregunta getPregunta() { return pregunta; }
+
+    /** true si la pregunta evaluada es de alternativas (A, B, C, D). */
+    public boolean isAlternativas() {
+        return pregunta != null && pregunta.getTipo() == TipoPregunta.ALTERNATIVAS;
+    }
 }

@@ -4,7 +4,11 @@
  */
 package com.amcm.evaluadordecuestionarios;
 
-/** Contrato comun de los plugins. */
+/*
+ * ProcesadorPlugin es una interfaz: 
+ * Define el CONTRATO que debe cumplir toda clase para ser un plugin. 
+ * No contiene lógica de evaluación, solo dice qué métodos debe tener un plugin. 
+ */
 public interface ProcesadorPlugin {
     String id();
     boolean soporta(Contexto contexto);
@@ -13,8 +17,6 @@ public interface ProcesadorPlugin {
     /**
      * Recibe tambien el Contexto, para que el plugin pueda leer la pregunta
      * que esta evaluando. 
-     * Por defecto delega en procesar(String), asi que cualquier plugin
-     * que solo implemente el contrato original sigue siendo valido.
     */
     default Resultado procesar(String entrada, Contexto contexto) {
         return procesar(entrada);

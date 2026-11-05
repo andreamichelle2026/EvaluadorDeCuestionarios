@@ -6,5 +6,6 @@ package com.amcm.evaluadordecuestionarios;
 
 public enum TipoPregunta {
     CORTA,
+    ALTERNATIVAS,
     LARGA
 }

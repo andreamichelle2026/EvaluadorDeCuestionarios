@@ -7,7 +7,9 @@ package com.amcm.evaluadordecuestionarios;
 import java.text.Normalizer;
 import java.util.Locale;
 
-/** Normalizacion de texto compartida por los plugins (Java y Scala). */
+/*
+ * Normalizacion de texto compartida por los plugins (Java y Scala). 
+ */
 public final class TextoUtil {
 
     private TextoUtil() {}
