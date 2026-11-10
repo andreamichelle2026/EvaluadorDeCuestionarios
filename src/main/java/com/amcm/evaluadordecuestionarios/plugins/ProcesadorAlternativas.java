@@ -1,40 +1,30 @@
 package com.amcm.evaluadordecuestionarios.plugins;
 
 import com.amcm.evaluadordecuestionarios.Contexto;
+import com.amcm.evaluadordecuestionarios.PluginBase;
 import com.amcm.evaluadordecuestionarios.Pregunta;
-import com.amcm.evaluadordecuestionarios.ProcesadorPlugin;
 import com.amcm.evaluadordecuestionarios.Resultado;
 import com.amcm.evaluadordecuestionarios.TextoUtil;
+import com.amcm.evaluadordecuestionarios.TipoPregunta;
 
 /**
  * Plugin Java para preguntas de alternativas (A, B, C, D).
  * Acepta "b", "B", "b)", "opcion b" o "respuesta b". Cualquier otra entrada
- * (varias letras, letra fuera de rango, vacia) se considera no valida y puntua 0.
+ * (varias letras, letra fuera de rango, vacia) es no valida y puntua 0.
  */
-public class ProcesadorAlternativas implements ProcesadorPlugin {
+public class ProcesadorAlternativas extends PluginBase {
 
-    @Override
-    public String id() {
-        return "alternativas";
+    public ProcesadorAlternativas() {
+        super("alternativas");
     }
 
     @Override
     public boolean soporta(Contexto contexto) {
-        return contexto.isAlternativas();
+        return contexto.getTipo() == TipoPregunta.ALTERNATIVAS;
     }
 
     @Override
-    public Resultado procesar(String entrada) {
-        return new Resultado("Sin pregunta asociada: no se puede evaluar la alternativa", 0.0);
-    }
-
-    @Override
-    public Resultado procesar(String entrada, Contexto contexto) {
-        Pregunta pregunta = contexto.getPregunta();
-        if (pregunta == null || !contexto.isAlternativas()) {
-            return procesar(entrada);
-        }
-
+    protected Resultado evaluar(String entrada, Pregunta pregunta, Contexto contexto) {
         char correcta = pregunta.getRespuestaCorrecta();
         int numOpciones = pregunta.getOpciones().size();
         Character elegida = extraerLetra(entrada, numOpciones);

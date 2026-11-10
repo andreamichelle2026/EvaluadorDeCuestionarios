@@ -4,52 +4,35 @@
  */
 package com.amcm.evaluadordecuestionarios;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
- * Clase que decide qué plugin evalúa cada pregunta. 
- * No ejecuta nada ni crea objetos: 
- * recibe un Contexto y devuelve el nombre de la clase del plugin elegido, 
- * más un texto que explica por qué.
+ * Regla de seleccion: de los plugins descubiertos (en el orden de plugins.properties)
+ * elige el PRIMERO cuyo metodo soporta(contexto) devuelva true.
  *
- *  - pregunta de alternativas                              -> ProcesadorAlternativas (Java)
- *  - modoValidacion = true  (respuesta corta)              -> ProcesadorSimple       (Java)
- *  - modoValidacion = false (respuesta larga -10 letras)   -> ProcesadorSimple (Java)   
- *  - modoValidacion = false (respuesta larga)              -> ProcesadorConceptos (Scala)
+ * Las reglas concretas viven en cada plugin:
+ *  - por tipo de pregunta: alternativas / corta / abierta;
+ *  - por tamanio de la respuesta: una abierta con menos de TEXTO_MINIMO_ABIERTA
+ *    letras la atiende el plugin simple, no el de conceptos.
  */
 public final class SelectorPlugin {
 
-    public static final String CLASE_SIMPLE = "com.amcm.evaluadordecuestionarios.plugins.ProcesadorSimple";
-    public static final String CLASE_ALTERNATIVAS = "com.amcm.evaluadordecuestionarios.plugins.ProcesadorAlternativas";
-    public static final String CLASE_CONCEPTOS = "com.amcm.evaluadordecuestionarios.plugins.ProcesadorConceptos";
-    public static final int TEXTO_MINIMO_ABIERTA = 10;   // caracteres
+    /** Letras minimas para que una pregunta abierta se evalue por conceptos. */
+    public static final int TEXTO_MINIMO_ABIERTA = 10;
 
     private SelectorPlugin() {}
 
-    public static String seleccionar(Contexto contexto) {
-        if (contexto.isAlternativas()) {
-            return CLASE_ALTERNATIVAS;
-        }
-        if (contexto.isModoValidacion()) {
-            return CLASE_SIMPLE;
-        }
-        // pregunta abierta: el tamano decide
-        return contexto.getTamanioTexto() < TEXTO_MINIMO_ABIERTA ? CLASE_SIMPLE : CLASE_CONCEPTOS;
+    public static Optional<ProcesadorPlugin> seleccionar(Contexto contexto, List<ProcesadorPlugin> disponibles) {
+        return disponibles.stream()
+                .filter(plugin -> plugin.soporta(contexto))
+                .findFirst();
     }
 
-    /** Explica por que la regla eligio esa clase (se muestra al usuario). */
-    public static String motivo(Contexto contexto) {
-        String tamanio = " (respuesta de " + contexto.getTamanioTexto() + " caracteres)";
-        if (contexto.isAlternativas()) {
-            return "pregunta de alternativas -> se compara la letra elegida con la opcion correcta" + tamanio;
-        }
-        if (contexto.isModoValidacion()) {
-            return "pregunta de respuesta corta -> modo validacion: se compara con las respuestas aceptadas" + tamanio;
-        }
-        if (contexto.getTamanioTexto() < TEXTO_MINIMO_ABIERTA) {
-            return "pregunta abierta con respuesta menor a " + TEXTO_MINIMO_ABIERTA
-                + " caracteres -> no hay texto suficiente para la rubrica, la valida el plugin simple" + tamanio;
-        }
-        return "pregunta abierta con texto suficiente (>= " + TEXTO_MINIMO_ABIERTA
-            + " caracteres) -> se evaluan los conceptos de la rubrica" + tamanio;
+    /** Explica por que se eligio ese plugin (se muestra al usuario). */
+    public static String motivo(Contexto contexto, ProcesadorPlugin elegido) {
+        return "pregunta " + contexto.getTipo() + ", " + contexto.getTamanioTexto()
+                + " letras -> '" + elegido.id() + "' es el primer plugin de "
+                + CargadorPlugin.ARCHIVO + " que soporta este contexto";
+    }
 }
-}
-

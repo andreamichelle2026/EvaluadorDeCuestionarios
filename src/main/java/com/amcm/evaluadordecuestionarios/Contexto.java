@@ -4,28 +4,19 @@
  */
 package com.amcm.evaluadordecuestionarios;
 
-/*
- * Clase de datos que representa la información de la pregunta que se está evaluando,
- * para pasársela al selector y a los plugins.
-*/
-
+/** Lo que el monitor observa: tamanio de la respuesta, tipo de pregunta y la pregunta. */
 public class Contexto {
-    private int tamanioTexto; // Longitud en caracteres de la respuesta del usuario
-    private boolean modoValidacion; // true si la pregunta es tipo CORTA / ALTERNATIVAS
-    private Pregunta pregunta;   // pregunta que se esta evaluando (puede ser null)
+    private final int tamanioTexto;
+    private final TipoPregunta tipo;
+    private final Pregunta pregunta;   // pregunta que se esta evaluando (puede ser null)
 
-    public Contexto(int tamanioTexto, boolean modoValidacion, Pregunta pregunta) {
+    public Contexto(int tamanioTexto, TipoPregunta tipo, Pregunta pregunta) {
         this.tamanioTexto = tamanioTexto;
-        this.modoValidacion = modoValidacion;
+        this.tipo = tipo;
         this.pregunta = pregunta;
     }
 
     public int getTamanioTexto() { return tamanioTexto; }
-    public boolean isModoValidacion() { return modoValidacion; }
+    public TipoPregunta getTipo() { return tipo; }
     public Pregunta getPregunta() { return pregunta; }
-
-    /** true si la pregunta evaluada es de alternativas (A, B, C, D). */
-    public boolean isAlternativas() {
-        return pregunta != null && pregunta.getTipo() == TipoPregunta.ALTERNATIVAS;
-    }
 }
